@@ -51,7 +51,6 @@ public class DefaultApi {
          @ApiParam(value = "A DNS Record", required = true) DnsRecord body,
          @Context SecurityContext securityContext)
          throws NotFoundException {
-      System.out.println("DNS operation");
       return delegate.dns(body, securityContext);
    }
 }

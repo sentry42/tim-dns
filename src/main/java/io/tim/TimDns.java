@@ -9,12 +9,15 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.tim.dns.api.DefaultApi;
 import io.tim.dns.api.TeapotApi;
 
 public class TimDns {
+
+   public static final Logger logger = LoggerFactory.getLogger(TimDns.class);
 
    private static Server server;
    private static HandlerCollection handlerCollection;
@@ -45,8 +48,6 @@ public class TimDns {
       }
       if (!"/".equals(path)) {
          context.setContextPath(path);
-      } else {
-         System.out.println("Not setting ServletContextHandler path");
       }
       context.addServlet(servletHolder, "/*");
 
@@ -54,6 +55,7 @@ public class TimDns {
 
       handlerCollection.addHandler(context);
 
+      logger.info("Starting server.");
       server.start();
       for (Handler handler : server.getHandlers()) {
          handler.start();
@@ -61,7 +63,7 @@ public class TimDns {
       for (Connector serverConnector : server.getConnectors()) {
          serverConnector.start();
       }
-
+      logger.info("Server started.");
    }
 
    private ResourceConfig getResourceConfig() {
@@ -72,16 +74,22 @@ public class TimDns {
    }
 
    public static void main(String[] args) throws Exception {
+      System.out.println("System stdout");
+      System.err.println("System stderr");
+      logger.debug("Debug logger");
+      logger.info("Info logger");
+      logger.warn("Warn logger");
+      logger.error("Error logger");
       int port = 80;
       try {
          port = Integer.parseInt(args[0]);
       } catch (NumberFormatException nfe) {
-         LoggerFactory.getLogger(TimDns.class)
-               .error(
-                     "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
+         logger.error(
+               "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
          System.out.println(
                "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
       }
+      logger.info("TimDns configured to start on port " + port);
       new TimDns(port);
    }
 
