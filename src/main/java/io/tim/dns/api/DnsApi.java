@@ -12,22 +12,22 @@ import javax.ws.rs.core.SecurityContext;
 
 import io.swagger.annotations.ApiParam;
 import io.tim.dns.model.DnsRecord;
-import io.tim.factories.DefaultApiServiceFactory;
+import io.tim.factories.DnsApiServiceFactory;
 
 @Path("/")
 @io.swagger.annotations.Api(description = "the  API")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2018-12-16T15:33:42.028Z")
-public class DefaultApi {
-   private final DefaultApiService delegate;
+public class DnsApi {
+   private final DnsApiService delegate;
 
-   public DefaultApi(@Context ServletConfig servletContext) {
-      DefaultApiService delegate = null;
+   public DnsApi(@Context ServletConfig servletContext) {
+      DnsApiService delegate = null;
 
       if (servletContext != null) {
-         String implClass = servletContext.getInitParameter("DefaultApi.implementation");
+         String implClass = servletContext.getInitParameter("DnsApi.implementation");
          if (implClass != null && !"".equals(implClass.trim())) {
             try {
-               delegate = (DefaultApiService) Class.forName(implClass).newInstance();
+               delegate = (DnsApiService) Class.forName(implClass).newInstance();
             } catch (Exception e) {
                throw new RuntimeException(e);
             }
@@ -35,7 +35,7 @@ public class DefaultApi {
       }
 
       if (delegate == null) {
-         delegate = DefaultApiServiceFactory.getDefaultApi();
+         delegate = DnsApiServiceFactory.getDefaultApi();
       }
 
       this.delegate = delegate;

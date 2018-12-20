@@ -12,6 +12,6 @@ public class TeapotApiServiceImpl extends TeapotApiService {
    @Override
    public Response teapot(SecurityContext securityContext) throws NotFoundException {
       // do some magic!
-      return Response.status(Status.fromStatusCode(408)).entity("Making tea.").build();
+      return Response.status(Status.fromStatusCode(200)).entity("Making tea.").build();
    }
 }

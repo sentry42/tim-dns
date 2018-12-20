@@ -12,7 +12,7 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.tim.dns.api.DefaultApi;
+import io.tim.dns.api.DnsApi;
 import io.tim.dns.api.TeapotApi;
 
 public class TimDns {
@@ -70,7 +70,7 @@ public class TimDns {
 
    private ResourceConfig getResourceConfig() {
       ResourceConfig resourceConfig = new ResourceConfig();
-      resourceConfig.register(DefaultApi.class);
+      resourceConfig.register(DnsApi.class);
       resourceConfig.register(TeapotApi.class);
       return resourceConfig;
    }
