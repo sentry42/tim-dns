@@ -9,6 +9,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.slf4j.LoggerFactory;
 
 import io.tim.dns.api.DefaultApi;
 import io.tim.dns.api.TeapotApi;
@@ -18,7 +19,7 @@ public class TimDns {
    private static Server server;
    private static HandlerCollection handlerCollection;
 
-   public TimDns() throws Exception {
+   public TimDns(int port) throws Exception {
       if (server == null) {
          server = new Server();
          handlerCollection = new HandlerCollection();
@@ -27,7 +28,7 @@ public class TimDns {
 
       Connector connector = new ServerConnector(server);
       ((ServerConnector) connector).setName("TimDns");
-      ((ServerConnector) connector).setPort(80);
+      ((ServerConnector) connector).setPort(port);
       ((ServerConnector) connector).setHost("0.0.0.0");
       ((ServerConnector) connector).setIdleTimeout(5000);
 
@@ -71,7 +72,17 @@ public class TimDns {
    }
 
    public static void main(String[] args) throws Exception {
-      new TimDns();
+      int port = 80;
+      try {
+         port = Integer.parseInt(args[0]);
+      } catch (NumberFormatException nfe) {
+         LoggerFactory.getLogger(TimDns.class)
+               .error(
+                     "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
+         System.out.println(
+               "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
+      }
+      new TimDns(port);
    }
 
 }
