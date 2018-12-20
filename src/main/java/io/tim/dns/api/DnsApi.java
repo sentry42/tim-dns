@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -49,10 +50,10 @@ public class DnsApi {
    @io.swagger.annotations.ApiResponses(value = {
          @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Void.class) })
    public Response dns(
-         @ApiParam(value = "A DNS Record", required = true) DnsRecord body,
+         @ApiParam(value = "A DNS Record", required = true) DnsRecord record,
          @Context SecurityContext securityContext)
          throws NotFoundException {
-      return delegate.dns(body, securityContext);
+      return delegate.dns(record, securityContext);
    }
 
    @GET
@@ -62,5 +63,16 @@ public class DnsApi {
          @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Void.class) })
    public Response defaultOp(@Context SecurityContext securityContext) throws NotFoundException {
       return Response.ok().build();
+   }
+
+   @GET
+   @Path("/dns/{hostname}")
+   @Produces({ "application/json" })
+   @io.swagger.annotations.ApiOperation(value = "Default.", notes = "Default.", response = Void.class, tags = {})
+   @io.swagger.annotations.ApiResponses(value = {
+         @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Void.class) })
+   public Response dns(@PathParam(value = "hostname") String hostname, @Context SecurityContext securityContext)
+         throws NotFoundException {
+      return delegate.dns(hostname, securityContext);
    }
 }
