@@ -84,7 +84,14 @@ public class TimDns {
       logger.error("Error logger");
       int port = 80;
       try {
-         port = Integer.parseInt(args[0]);
+         if (args == null || args.length == 0) {
+            logger.error(
+                  "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
+            System.out.println(
+                  "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
+         } else {
+            port = Integer.parseInt(args[0]);
+         }
       } catch (NumberFormatException nfe) {
          logger.error(
                "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");

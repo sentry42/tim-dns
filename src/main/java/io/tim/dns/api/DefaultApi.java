@@ -2,6 +2,7 @@ package io.tim.dns.api;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -52,5 +53,13 @@ public class DefaultApi {
          @Context SecurityContext securityContext)
          throws NotFoundException {
       return delegate.dns(body, securityContext);
+   }
+
+   @GET
+   @io.swagger.annotations.ApiOperation(value = "Default.", notes = "Default.", response = Void.class, tags = {})
+   @io.swagger.annotations.ApiResponses(value = {
+         @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Void.class) })
+   public Response defaultOp(@Context SecurityContext securityContext) throws NotFoundException {
+      return Response.ok().build();
    }
 }
