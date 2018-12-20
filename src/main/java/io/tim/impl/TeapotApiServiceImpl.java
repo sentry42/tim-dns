@@ -4,7 +4,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
-import io.tim.dns.api.ApiResponseMessage;
 import io.tim.dns.api.NotFoundException;
 import io.tim.dns.api.TeapotApiService;
 
@@ -13,8 +12,6 @@ public class TeapotApiServiceImpl extends TeapotApiService {
    @Override
    public Response teapot(SecurityContext securityContext) throws NotFoundException {
       // do some magic!
-      return Response.status(Status.fromStatusCode(408))
-            .entity(new ApiResponseMessage(ApiResponseMessage.OK, "tea!"))
-            .build();
+      return Response.status(Status.fromStatusCode(408)).entity("Making tea.").build();
    }
 }

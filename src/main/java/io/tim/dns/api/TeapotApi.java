@@ -44,7 +44,6 @@ public class TeapotApi {
    @io.swagger.annotations.ApiResponses(value = {
          @io.swagger.annotations.ApiResponse(code = 408, message = "Making tea", response = Void.class) })
    public Response teapot(@Context SecurityContext securityContext) throws NotFoundException {
-      System.out.println("DNS operation");
       return delegate.teapot(securityContext);
    }
 }
