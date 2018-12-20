@@ -56,6 +56,7 @@ public class DefaultApi {
    }
 
    @GET
+   @Path("/dns")
    @io.swagger.annotations.ApiOperation(value = "Default.", notes = "Default.", response = Void.class, tags = {})
    @io.swagger.annotations.ApiResponses(value = {
          @io.swagger.annotations.ApiResponse(code = 200, message = "Success", response = Void.class) })

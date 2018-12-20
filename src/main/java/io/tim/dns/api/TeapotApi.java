@@ -1,6 +1,7 @@
 package io.tim.dns.api;
 
 import javax.servlet.ServletConfig;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
@@ -38,6 +39,7 @@ public class TeapotApi {
 
    @GET
    @Path("/teapot")
+   @Consumes({ "application/json" })
    @io.swagger.annotations.ApiOperation(value = "Makes tea.", notes = "Makes tea.", response = Void.class, tags = {})
    @io.swagger.annotations.ApiResponses(value = {
          @io.swagger.annotations.ApiResponse(code = 408, message = "Making tea", response = Void.class) })
