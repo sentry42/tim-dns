@@ -56,6 +56,7 @@ public class TimDns {
       handlerCollection.addHandler(context);
 
       logger.info("Starting server.");
+      System.out.println("Starting server.");
       server.start();
       for (Handler handler : server.getHandlers()) {
          handler.start();
@@ -64,6 +65,7 @@ public class TimDns {
          serverConnector.start();
       }
       logger.info("Server started.");
+      System.out.println("Server started.");
    }
 
    private ResourceConfig getResourceConfig() {
@@ -90,6 +92,7 @@ public class TimDns {
                "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
       }
       logger.info("TimDns configured to start on port " + port);
+      System.out.println("TimDns configured to start on port " + port);
       new TimDns(port);
    }
 
