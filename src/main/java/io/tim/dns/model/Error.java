@@ -22,53 +22,54 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
+ * Represents a failed outcome
  */
-@ApiModel(description = "Represents a DNS Record")
+@ApiModel(description = "Represents a failed outcome")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2018-12-16T15:33:42.028Z")
-public class DnsRecord {
-   @JsonProperty("hostname")
-   private String hostname = null;
+public class Error {
 
-   @JsonProperty("ip")
-   private String ip = null;
+   public class ErrorCode {
+      public static final int NO_RECORD = 1;
+   }
 
-   public DnsRecord hostname(String hostname) {
-      this.hostname = hostname;
+   @JsonProperty("code")
+   private int code = 0;
+
+   @JsonProperty("message")
+   private String message = null;
+
+   public Error code(int code) {
+      this.code = code;
       return this;
    }
 
-   /**
-    * 
-    * @return hostname
-    **/
-   @JsonProperty("hostname")
+   @JsonProperty("code")
    @ApiModelProperty(required = true, value = "")
    @NotNull
-   public String getHostname() {
-      return hostname;
+   public int getCode() {
+      return code;
    }
 
-   public void setHostname(String hostname) {
-      this.hostname = hostname;
+   public void setCode(int code) {
+      this.code = code;
    }
 
-   public DnsRecord ip(String ip) {
-      this.ip = ip;
+   public Error message(String message) {
+      this.message = message;
       return this;
    }
 
    /**
-    * 
-    * @return ip
+    * @return message
     **/
-   @JsonProperty("ip")
+   @JsonProperty("message")
    @ApiModelProperty(value = "")
-   public String getIp() {
-      return ip;
+   public String getMessage() {
+      return message;
    }
 
-   public void setIp(String ip) {
-      this.ip = ip;
+   public void setMessage(String message) {
+      this.message = message;
    }
 
    @Override
@@ -79,22 +80,22 @@ public class DnsRecord {
       if (o == null || getClass() != o.getClass()) {
          return false;
       }
-      DnsRecord dnsRecord = (DnsRecord) o;
-      return Objects.equals(this.hostname, dnsRecord.hostname) && Objects.equals(this.ip, dnsRecord.ip);
+      Error error = (Error) o;
+      return Objects.equals(this.code, error.code) && Objects.equals(this.message, error.message);
    }
 
    @Override
    public int hashCode() {
-      return Objects.hash(hostname, ip);
+      return Objects.hash(code, message);
    }
 
    @Override
    public String toString() {
       StringBuilder sb = new StringBuilder();
-      sb.append("class DnsRecord {\n");
+      sb.append("class Error {\n");
 
-      sb.append("    hostname: ").append(toIndentedString(hostname)).append("\n");
-      sb.append("    ip: ").append(toIndentedString(ip)).append("\n");
+      sb.append("    code: ").append(toIndentedString(code)).append("\n");
+      sb.append("    message: ").append(toIndentedString(message)).append("\n");
       sb.append("}");
       return sb.toString();
    }
