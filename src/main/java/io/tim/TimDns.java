@@ -1,5 +1,8 @@
 package io.tim;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -13,96 +16,152 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.tim.dns.api.DnsApi;
+import io.tim.dns.api.InvalidSignatureException;
 import io.tim.dns.api.JacksonJsonProvider;
 import io.tim.dns.api.TeapotApi;
+import io.tim.dns.api.TeapotException;
+import io.tim.dns.api.ThrowableExceptionMapper;
 
 public class TimDns {
 
-   public static final Logger logger = LoggerFactory.getLogger(TimDns.class);
+	public static final Logger logger = LoggerFactory.getLogger(TimDns.class);
+	public static final String APP_NAME = "TimDns";
 
-   private static Server server;
-   private static HandlerCollection handlerCollection;
+	private static Server server;
+	private static HandlerCollection handlerCollection;
 
-   public TimDns(int port) throws Exception {
-      if (server == null) {
-         server = new Server();
-         handlerCollection = new HandlerCollection();
-         server.setHandler(handlerCollection);
-      }
+	private int port = 80;
+	private byte[] privateKey = null;
+	private Map<String, byte[]> publicKeys = new HashMap<>();
 
-      Connector connector = new ServerConnector(server);
-      ((ServerConnector) connector).setName("TimDns");
-      ((ServerConnector) connector).setPort(port);
-      ((ServerConnector) connector).setHost("0.0.0.0");
-      ((ServerConnector) connector).setIdleTimeout(5000);
+	public TimDns port(int port) {
+		this.port = port;
+		return this;
+	}
 
-      server.addConnector(connector);
+	public int getPort() {
+		return port;
+	}
 
-      ServletContainer servletContainer = new ServletContainer(getResourceConfig());
-      ServletHolder servletHolder = new ServletHolder(servletContainer);
+	public TimDns privateKey(byte[] privateKey) {
+		this.privateKey = privateKey;
+		return this;
+	}
 
-      ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-      context.setDisplayName("TimDns Servlet Context Handler");
-      String path = "/";
-      if (!path.startsWith("/")) {
-         path = "/" + path;
-      }
-      if (!"/".equals(path)) {
-         context.setContextPath(path);
-      }
-      context.addServlet(servletHolder, "/*");
+	public byte[] getPrivateKey() {
+		return privateKey;
+	}
 
-      // context.addServlet(Bootstrap.class, "/dns");
+	public TimDns addPublicKey(String kid, byte[] key) {
+		publicKeys.put(kid, key);
+		return this;
+	}
 
-      handlerCollection.addHandler(context);
+	public byte[] getPublicKey(String kid) {
+		return publicKeys.get(kid);
+	}
 
-      logger.info("Starting server.");
-      System.out.println("Starting server.");
-      server.start();
-      for (Handler handler : server.getHandlers()) {
-         handler.start();
-      }
-      for (Connector serverConnector : server.getConnectors()) {
-         serverConnector.start();
-      }
-      logger.info("Server started.");
-      System.out.println("Server started.");
-   }
+	public void start() throws Exception {
+		if (server == null) {
+			server = new Server();
+			handlerCollection = new HandlerCollection();
+			server.setHandler(handlerCollection);
+		}
 
-   private ResourceConfig getResourceConfig() {
-      ResourceConfig resourceConfig = new ResourceConfig();
-      resourceConfig.register(DnsApi.class);
-      resourceConfig.register(TeapotApi.class);
-      resourceConfig.register(JacksonJsonProvider.class);
-      return resourceConfig;
-   }
+		Connector connector = new ServerConnector(server);
+		((ServerConnector) connector).setName(APP_NAME);
+		((ServerConnector) connector).setPort(port);
+		((ServerConnector) connector).setHost("0.0.0.0");
+		((ServerConnector) connector).setIdleTimeout(5000);
 
-   public static void main(String[] args) throws Exception {
-      System.out.println("System stdout");
-      System.err.println("System stderr");
-      logger.debug("Debug logger");
-      logger.info("Info logger");
-      logger.warn("Warn logger");
-      logger.error("Error logger");
-      int port = 80;
-      try {
-         if (args == null || args.length == 0) {
-            logger.error(
-                  "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
-            System.out.println(
-                  "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
-         } else {
-            port = Integer.parseInt(args[0]);
-         }
-      } catch (NumberFormatException nfe) {
-         logger.error(
-               "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
-         System.out.println(
-               "The first argument should be an integer for the server's listening port, Stupid! Defaulting to port 80.");
-      }
-      logger.info("TimDns configured to start on port " + port);
-      System.out.println("TimDns configured to start on port " + port);
-      new TimDns(port);
-   }
+		server.addConnector(connector);
 
+		ServletContainer servletContainer = new ServletContainer(getResourceConfig());
+		ServletHolder servletHolder = new ServletHolder(servletContainer);
+
+		ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		context.setDisplayName("TimDns Servlet Context Handler");
+		String path = "/";
+		if (!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		if (!"/".equals(path)) {
+			context.setContextPath(path);
+		}
+		context.addServlet(servletHolder, "/*");
+
+		// context.addServlet(Bootstrap.class, "/dns");
+
+		handlerCollection.addHandler(context);
+
+		logger.info("Starting server.");
+		System.out.println("Starting server.");
+		server.start();
+		for (Handler handler : server.getHandlers()) {
+			handler.start();
+		}
+		for (Connector serverConnector : server.getConnectors()) {
+			serverConnector.start();
+		}
+		logger.info("Server started.");
+		System.out.println("Server started.");
+	}
+
+	private ResourceConfig getResourceConfig() {
+		ResourceConfig resourceConfig = new ResourceConfig();
+		resourceConfig.register(DnsApi.class);
+		resourceConfig.register(TeapotApi.class);
+		resourceConfig.register(JacksonJsonProvider.class);
+		resourceConfig.register(ThrowableExceptionMapper.class);
+		resourceConfig.register(InvalidSignatureException.class);
+		resourceConfig.register(TeapotException.class);
+		return resourceConfig;
+	}
+
+	public static class TimDnsBuilder {
+
+		private int port = -1;
+		private byte[] privateKey = null;
+		private Map<String, byte[]> publicKeys = new HashMap<>();
+
+		public TimDnsBuilder() {
+
+		}
+
+		public TimDnsBuilder port(int port) {
+			this.port = port;
+			return this;
+		}
+
+		public TimDnsBuilder privateKey(byte[] privateKey) {
+			this.privateKey = privateKey;
+			return this;
+		}
+
+		public TimDnsBuilder addPublicKey(String kid, byte[] key) {
+			publicKeys.put(kid, key);
+			return this;
+		}
+
+		public TimDns build() throws StartupException {
+			validateBuildParameters();
+			return new TimDns().port(port);
+		}
+
+		private void validateBuildParameters() throws StartupException {
+			boolean parametersValid = true;
+			StringBuilder sb = new StringBuilder();
+			if (port <= 0) {
+				parametersValid = false;
+				sb.append("No valid port set.").append(System.lineSeparator());
+			}
+			if (privateKey != null && privateKey.length != 32) {
+				parametersValid = false;
+				sb.append("The private key must be exactly 32 bytes (256 bits).").append(System.lineSeparator());
+			}
+			if (!parametersValid) {
+				throw new StartupException(sb.toString());
+			}
+		}
+	}
 }

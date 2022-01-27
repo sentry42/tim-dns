@@ -43,7 +43,7 @@ public class TeapotApi {
    @io.swagger.annotations.ApiOperation(value = "Makes tea.", notes = "Makes tea.", response = Void.class, tags = {})
    @io.swagger.annotations.ApiResponses(value = {
          @io.swagger.annotations.ApiResponse(code = 408, message = "Making tea", response = Void.class) })
-   public Response teapot(@Context SecurityContext securityContext) throws NotFoundException {
+   public Response teapot(@Context SecurityContext securityContext) throws NotFoundException, TeapotException {
       return delegate.teapot(securityContext);
    }
 }
